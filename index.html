@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aim Lab - Cyber Trainer</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Background Ambient Particles Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="app-container">
+    <!-- 1. LOBBY SCREEN -->
+    <section id="lobby-screen" class="screen active">
+      <header class="lobby-header">
+        <h1 class="logo">AIM<span>LAB</span></h1>
+        <p class="subtitle">CYBERNETIC AIM TRAINER</p>
+      </header>
+
+      <div class="modes-grid">
+        <!-- Gridshot Card -->
+        <div class="mode-card" data-mode="gridshot">
+          <div class="mode-icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </div>
+          <h3>Gridshot</h3>
+          <p>화면에 생성되는 3개의 큼직한 타겟을 빠르게 파괴하며 속도와 흐름을 훈련합니다.</p>
+          <div class="high-score-badge">High Score: <span id="high-gridshot">0</span></div>
+        </div>
+
+        <!-- Microshot Card -->
+        <div class="mode-card" data-mode="microshot">
+          <div class="mode-icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <circle cx="12" cy="12" r="10"></circle>
+            </svg>
+          </div>
+          <h3>Microshot</h3>
+          <p>화면에 하나씩 무작위로 생성되는 미세한 타겟을 조준하여 극한의 정밀도를 훈련합니다.</p>
+          <div class="high-score-badge">High Score: <span id="high-microshot">0</span></div>
+        </div>
+
+        <!-- Spidershot Card -->
+        <div class="mode-card" data-mode="spidershot">
+          <div class="mode-icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93"></path>
+            </svg>
+          </div>
+          <h3>Spidershot</h3>
+          <p>중앙 타겟과 사방에 무작위로 생성되는 타겟을 번갈아 격파하며 순간 플릭 능력을 향상합니다.</p>
+          <div class="high-score-badge">High Score: <span id="high-spidershot">0</span></div>
+        </div>
+
+        <!-- Tracking Card -->
+        <div class="mode-card" data-mode="tracking">
+          <div class="mode-icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <h3>Tracking</h3>
+          <p>불규칙하게 연속 이동하는 타겟을 조준선으로 조준한 상태를 유지하여 유지력을 훈련합니다.</p>
+          <div class="high-score-badge">High Score: <span id="high-tracking">0</span></div>
+        </div>
+      </div>
+
+      <footer class="lobby-footer">
+        <button id="open-settings-btn" class="glow-btn">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          SETTINGS
+        </button>
+      </footer>
+    </section>
+
+    <!-- 2. GAMEPLAY SCREEN -->
+    <section id="game-screen" class="screen">
+      <div class="game-hud">
+        <div class="hud-item">
+          <span class="label">SCORE</span>
+          <span id="score-display" class="value">000,000</span>
+        </div>
+        <div class="hud-item">
+          <span class="label">ACCURACY</span>
+          <span id="accuracy-display" class="value">100.0%</span>
+        </div>
+        <div class="hud-item timer">
+          <span class="label">TIME LEFT</span>
+          <span id="timer-display" class="value yellow">30.0s</span>
+        </div>
+        <button id="exit-game-btn" class="icon-btn-text">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          종료
+        </button>
+      </div>
+
+      <div class="canvas-wrapper">
+        <canvas id="game-canvas"></canvas>
+        <!-- Countdown overlay -->
+        <div id="countdown-overlay" class="countdown-overlay">
+          <div id="countdown-number">3</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. RESULT SCREEN -->
+    <section id="result-screen" class="screen">
+      <div class="result-container">
+        <header class="result-header">
+          <h2 id="result-mode-title">GRIDSHOT</h2>
+          <p class="subtitle">훈련 세션 종료</p>
+        </header>
+
+        <div class="result-stats-grid">
+          <div class="stat-card large">
+            <div class="stat-label">최종 점수</div>
+            <div id="result-score" class="stat-value font-orbitron text-cyan">0</div>
+            <div id="new-high-label" class="new-high-badge hide">NEW HIGH SCORE!</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">정확도</div>
+            <div id="result-accuracy" class="stat-value text-emerald">0%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">평균 반응 속도</div>
+            <div id="result-reaction" class="stat-value text-purple">0ms</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">초당 제거 수 (KPS)</div>
+            <div id="result-kps" class="stat-value text-yellow">0.0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">맞춘 횟수 / 전체 격발</div>
+            <div id="result-ratio" class="stat-value">0 / 0</div>
+          </div>
+        </div>
+
+        <div class="result-chart-section">
+          <h3>세션 퍼포먼스 (시계열 명중 분석)</h3>
+          <div class="chart-container">
+            <svg id="performance-chart" viewBox="0 0 600 180"></svg>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button id="restart-game-btn" class="glow-btn">다시 하기</button>
+          <button id="back-lobby-btn" class="outline-btn">로비로 이동</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 4. SETTINGS MODAL -->
+  <div id="settings-modal" class="modal">
+    <div class="modal-content">
+      <header class="modal-header">
+        <h2>환경 설정</h2>
+        <button id="close-settings-btn" class="icon-btn">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </header>
+
+      <div class="modal-tabs">
+        <button class="tab-btn active" data-tab="crosshair">조준선 (Crosshair)</button>
+        <button class="tab-btn" data-tab="target">타겟 (Target)</button>
+        <button class="tab-btn" data-tab="controls">조작 & 감도</button>
+        <button class="tab-btn" data-tab="sound">사운드 & 기타</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Tab 1: Crosshair Settings -->
+        <div class="tab-content active" id="tab-crosshair">
+          <div class="settings-grid">
+            <div class="control-group">
+              <label for="crosshair-color">조준선 색상</label>
+              <input type="color" id="crosshair-color" value="#00ffcc">
+            </div>
+
+            <div class="control-group">
+              <label for="crosshair-size">크기 (Size) <span class="val-display" id="val-ch-size">10px</span></label>
+              <input type="range" id="crosshair-size" min="4" max="30" value="10">
+            </div>
+
+            <div class="control-group">
+              <label for="crosshair-thickness">두께 (Thickness) <span class="val-display" id="val-ch-thick">2px</span></label>
+              <input type="range" id="crosshair-thickness" min="1" max="6" value="2">
+            </div>
+
+            <div class="control-group">
+              <label for="crosshair-gap">간격 (Gap) <span class="val-display" id="val-ch-gap">4px</span></label>
+              <input type="range" id="crosshair-gap" min="0" max="15" value="4">
+            </div>
+
+            <div class="control-group checkbox-group">
+              <label for="crosshair-dot">중앙 도트(Dot) 표시</label>
+              <input type="checkbox" id="crosshair-dot" checked>
+            </div>
+
+            <!-- Live Preview -->
+            <div class="preview-box">
+              <span class="preview-label">조준선 미리보기</span>
+              <div class="crosshair-preview-canvas-wrap">
+                <canvas id="crosshair-preview-canvas" width="100" height="100"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Target Settings -->
+        <div class="tab-content" id="tab-target">
+          <div class="settings-grid">
+            <div class="control-group">
+              <label for="target-color">타겟 색상</label>
+              <input type="color" id="target-color" value="#ff3b30">
+            </div>
+
+            <div class="control-group">
+              <label for="target-size">기본 크기 (Radius) <span class="val-display" id="val-t-size">25px</span></label>
+              <input type="range" id="target-size" min="10" max="50" value="25">
+            </div>
+
+            <div class="control-group">
+              <label for="target-pulse">펄스(크기 조절) 애니메이션</label>
+              <select id="target-pulse">
+                <option value="none">없음</option>
+                <option value="slow">느리게</option>
+                <option value="fast" selected>빠르게</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Controls & Sensitivity Settings -->
+        <div class="tab-content" id="tab-controls">
+          <div class="settings-grid">
+            <div class="control-group">
+              <label for="sensitivity-slider">마우스 감도 (Sensitivity) <span class="val-display" id="val-sensitivity">1.0</span></label>
+              <input type="range" id="sensitivity-slider" min="0.1" max="5.0" step="0.1" value="1.0">
+            </div>
+
+            <div class="control-group checkbox-group">
+              <label for="pointer-lock">포인터 락 (마우스 화면 가두기)</label>
+              <input type="checkbox" id="pointer-lock">
+            </div>
+
+            <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-top: 0.5rem; word-break: keep-all;">
+              * <strong>포인터 락</strong>을 활성화하면 마우스 포인터가 브라우저 내에 잠기고, 실제 3D FPS 게임처럼 마우스 감도 슬라이더에 비례하여 조준선이 움직입니다. 게임 화면 클릭 시 활성화되며, <kbd style="background: rgba(255,255,255,0.15); padding: 2px 5px; border-radius: 4px; font-family: inherit;">ESC</kbd> 키를 눌러 일시 해제할 수 있습니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tab 4: Sound & Misc Settings -->
+        <div class="tab-content" id="tab-sound">
+          <div class="settings-grid">
+            <div class="control-group">
+              <label for="volume-slider">마스터 볼륨 <span class="val-display" id="val-volume">50%</span></label>
+              <input type="range" id="volume-slider" min="0" max="100" value="50">
+            </div>
+
+            <div class="control-group">
+              <label for="hit-sound-pitch">피격음 음고 (Hit Sound Pitch) <span class="val-display" id="val-hit-pitch">Medium</span></label>
+              <select id="hit-sound-pitch">
+                <option value="low">낮음</option>
+                <option value="medium" selected>중간</option>
+                <option value="high">높음</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="miss-sound-pitch">실패음 음고 (Miss Sound Pitch) <span class="val-display" id="val-miss-pitch">Low</span></label>
+              <select id="miss-sound-pitch">
+                <option value="low" selected>낮음</option>
+                <option value="medium">중간</option>
+                <option value="high">높음</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="modal-footer">
+        <button id="save-settings-btn" class="glow-btn">저장 및 닫기</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Sound toggle helper overlay for browser security policies -->
+  <div id="audio-enable-banner" class="audio-banner hidden">
+    <span>볼륨 사용을 위해 화면을 한번 터치/클릭해주세요.</span>
+  </div>
+
+  <!-- Game Script -->
+  <script src="game.js"></script>
+</body>
+</html>
